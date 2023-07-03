@@ -1,13 +1,10 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-
 import { MapService } from './map.service';
 import { MapController } from './map.controller';
-import { TravelSchema } from 'src/models/travel.model';
-
+import { MongodbModule } from 'src/mongodb/mongodb.module';
 @Module({
-  imports: [MongooseModule.forFeature([{name: "Travel", schema: TravelSchema}])],
+  imports: [MongodbModule],
   providers: [MapService],
-  controllers: [MapController]
+  controllers: [MapController],
 })
 export class MapModule {}
