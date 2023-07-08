@@ -21,7 +21,7 @@ export class PlaceService {
     return places;
   }
 
-  async createPlace(place: Place) {
+  async addPlace(place: Place) {
     const newPlace = await this.PlaceModel.create(place);
     console.log(`[CREATE] Place: ${newPlace}`);
     return newPlace;

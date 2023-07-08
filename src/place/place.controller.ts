@@ -18,9 +18,9 @@ export class PlaceController {
     return allPlace;
   }
 
-  @Post('/create')
+  @Post('/add')
   createPlace(@Body() newPlace: Place) {
-    const createdPlace = this.placeService.createPlace(newPlace);
+    const createdPlace = this.placeService.addPlace(newPlace);
     return createdPlace;
   }
 }

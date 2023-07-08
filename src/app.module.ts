@@ -10,12 +10,14 @@ import { MongodbService } from './mongodb/mongodb.service';
 import { MongodbModule } from './mongodb/mongodb.module';
 import { TransportationModule } from './transportation/transportation.module';
 import { UploadModule } from './upload/upload.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     MongooseModule.forRoot(
       'mongodb+srv://mild:FXG9aepfc8sJlz1b@cluster0.q9mqwq4.mongodb.net/taluyKU',
     ),
+    ConfigModule.forRoot({ isGlobal: true }),
     MapModule,
     PlaceModule,
     CategoryModule,

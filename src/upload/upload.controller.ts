@@ -1,11 +1,24 @@
-import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  HttpException,
+  HttpStatus,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadService } from './upload.service';
 
 @Controller('upload')
 export class UploadController {
-    @Post()
-    @UseInterceptors(FileInterceptor('image'))
-    uploadImage(@UploadedFile() file: Express.Multer.File){
-        file.buffer
+  constructor(private readonly uploadService: UploadService) {}
+
+  @Post()
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadImage(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+        throw new HttpException('No Image Provided', HttpStatus.BAD_REQUEST)
     }
+    return await this.uploadService.uploadImage(file.originalname, file.buffer);
+  }
 }

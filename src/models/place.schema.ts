@@ -39,8 +39,6 @@ export class Place extends Document{
 
   @Prop({
     required: true,
-    type: [SchemaTypes.ObjectId],
-    ref: 'Category',
   })
   categories: string[];
 
