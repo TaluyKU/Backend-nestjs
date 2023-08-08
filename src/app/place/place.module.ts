@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PlaceService } from './place.service';
 import { PlaceController } from './place.controller';
-import { MongodbModule } from 'src/mongodb/mongodb.module';
+import { MongodbModule } from 'src/app/mongodb/mongodb.module';
 
 @Module({
   imports: [MongodbModule],

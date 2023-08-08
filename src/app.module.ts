@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from 'src/app.controller';
+import { AppService } from 'src/app.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { MapModule } from './map/map.module';
-import { PlaceModule } from './place/place.module';
-import { AuthModule } from './auth/auth.module';
-import { CategoryModule } from './category/category.module';
-import { MongodbService } from './mongodb/mongodb.service';
-import { MongodbModule } from './mongodb/mongodb.module';
-import { TransportationModule } from './transportation/transportation.module';
-import { UploadModule } from './upload/upload.module';
+import { MapModule } from 'src/app/map/map.module';
+import { PlaceModule } from 'src/app/place/place.module';
+import { AuthModule } from 'src/app/auth/auth.module';
+import { CategoryModule } from 'src/app/category/category.module';
+import { MongodbService } from 'src/app/mongodb/mongodb.service';
+import { MongodbModule } from 'src/app/mongodb/mongodb.module';
+import { TransportationModule } from 'src/app/transportation/transportation.module';
+import { UploadModule } from 'src/app/upload/upload.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({

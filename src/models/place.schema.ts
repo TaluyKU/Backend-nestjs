@@ -21,29 +21,49 @@ export class Place extends Document{
   @Prop({
     type: [
       {
-        day: {
+        date: {
           type: String,
-          enum: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          enum: [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+          ],
         },
-        openingTime: { type: String },
-        closingTime: { type: String },
+        time: { 
+          start: {
+            hour: { type: String },
+            minute: { type: String },
+          },
+          end: {
+            hour: { type: String },
+            minute: { type: String },
+          },
+        },
       },
     ],
-    required: true,
   })
   weeklySchedule: {
-    day: string;
-    openingTime: string;
-    closingTime: string;
+    date: string;
+    time: {
+      start: {
+        hour: string;
+        minute: string;
+      };
+      end: {
+        hour: string;
+        minute: string;
+      };
+    };
   }[];
 
   @Prop({
     required: true,
   })
   categories: string[];
-
-  @Prop()
-  address: string;
 
   @Prop()
   phone: string[];

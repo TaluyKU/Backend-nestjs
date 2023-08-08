@@ -19,6 +19,7 @@ export class UploadController {
     if (!file) {
         throw new HttpException('No Image Provided', HttpStatus.BAD_REQUEST)
     }
+    console.log(`[POST] Upload image: ${file.originalname}`);
     return await this.uploadService.uploadImage(file.originalname, file.buffer);
   }
 }
