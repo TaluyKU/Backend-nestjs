@@ -1,16 +1,19 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, SchemaTypes } from 'mongoose';
+import { Document } from 'mongoose';
 
 @Schema()
-export class Place extends Document{
+export class Place extends Document {
   @Prop({ required: true })
   name: string;
 
   @Prop()
   alternativeNames: string[];
 
-  @Prop({ required: true })
-  location: number[];
+  @Prop({
+    type: { longitude: { type: Number }, latitude: { type: Number } },
+    required: true,
+  })
+  location: { latitude: number; longitude: number };
 
   @Prop()
   generalInfo: string;
@@ -24,16 +27,16 @@ export class Place extends Document{
         date: {
           type: String,
           enum: [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
+            'Sunday',
+            'Monday',
+            'Tuesday',
+            'Wednesday',
+            'Thursday',
+            'Friday',
+            'Saturday',
           ],
         },
-        time: { 
+        time: {
           start: {
             hour: { type: String },
             minute: { type: String },
@@ -73,6 +76,17 @@ export class Place extends Document{
 
   @Prop()
   email: string[];
+
+  @Prop({ default: 0, index: true })
+  reviewsCountLastMonth: number;
+
+  @Prop({ default: 0, index: true })
+  averageRating: number;
+
+  @Prop({ default: Date.now, index: true })
+  createdAt: Date;
 }
 
 export const PlaceSchema = SchemaFactory.createForClass(Place);
+
+PlaceSchema.index({ location: '2dsphere' });

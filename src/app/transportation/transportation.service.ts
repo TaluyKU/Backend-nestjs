@@ -12,19 +12,23 @@ export class TransportationService {
 
   async getAllTransportation() {
     const allTransportation = await this.transportationModel.find().exec();
-    console.log(`[GET] All Transportation: ${allTransportation}`);
+    // this.logger.debug(`[GET] All Transportation: ${allTransportation}`);
     return allTransportation;
   }
 
   async findTransportationById(id: string) {
-    const foundTransportation = await this.transportationModel.findById(id).exec();
-    console.log(`[GET] Transportation By Id: ${foundTransportation}`);
+    const foundTransportation = await this.transportationModel
+      .findById(id)
+      .exec();
+    // this.logger.debug(`[GET] Transportation By Id: ${foundTransportation}`);
     return foundTransportation;
   }
 
   async createTransportation(transportation: Transportation) {
-    const createdTransportation = await this.transportationModel.create(transportation);
-    console.log(`[CREATE] Create Transportation: ${createdTransportation}`);
+    const createdTransportation = await this.transportationModel.create(
+      transportation,
+    );
+    // this.logger.debug(`[CREATE] Create Transportation: ${createdTransportation}`);
     return createdTransportation;
   }
 }

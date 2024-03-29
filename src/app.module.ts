@@ -9,9 +9,11 @@ import { CategoryModule } from 'src/app/category/category.module';
 import { MongodbService } from 'src/app/mongodb/mongodb.service';
 import { MongodbModule } from 'src/app/mongodb/mongodb.module';
 import { TransportationModule } from 'src/app/transportation/transportation.module';
-import { UploadModule } from 'src/app/upload/upload.module';
+import { UploadModule } from 'src/app/uploadImage/upload.module';
 import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './app/users/users.module';
 
+//TODO: ENV
 @Module({
   imports: [
     MongooseModule.forRoot(
@@ -24,8 +26,10 @@ import { ConfigModule } from '@nestjs/config';
     MongodbModule,
     TransportationModule,
     UploadModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, MongodbService],
+  providers: [AppService],
 })
 export class AppModule {}
