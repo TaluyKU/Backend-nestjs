@@ -351,7 +351,7 @@ export class PlaceService {
     }
   }
 
-  async getNewPlace() {
+  async getNewestPlace() {
     try {
       const places = await this.PlaceModel.find()
         .sort({ createdAt: -1 })

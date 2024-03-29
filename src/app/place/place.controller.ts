@@ -94,4 +94,22 @@ export class PlaceController {
     const foundPlace = this.placeService.searchPlaceByName(query);
     return foundPlace;
   }
+
+  @Get('/popular')
+  getPopularPlace() {
+    const popularPlaces = this.placeService.getPopularPlace();
+    return popularPlaces;
+  }
+
+  @Get('/nearby/:lat/:long')
+  getNearbyPlace(@Param('lat') lat: number, @Param('long') long: number) {
+    const nearbyPlaces = this.placeService.getNearbyPlace(lat, long);
+    return nearbyPlaces;
+  }
+
+  @Get('/newest')
+  getNewestPlace() {
+    const newestPlaces = this.placeService.getNewestPlace();
+    return newestPlaces;
+  }
 }
