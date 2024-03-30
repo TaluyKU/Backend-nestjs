@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Place } from 'src/models/place.schema';
 import { AuthService } from '../auth/auth.service';
 import { Request } from 'express';
@@ -139,6 +139,8 @@ export class PlaceService {
         rating: rating,
         comment: review,
       });
+      await this.calculateAverageRating(placeId);
+      await this.sumReviewsCountLastMonth(placeId);
       this.logger.debug(`[CREATE] Review: ${newRating}`);
       return newRating;
     } catch (error) {
@@ -222,12 +224,32 @@ export class PlaceService {
   }
 
   async calculateAverageRating(placeId: string) {
+    const placeIdObj = new Types.ObjectId(placeId);
+    const mapScoreToLabel = (score) => {
+      if (score === 5) {
+        return 'A';
+      } else if (score >= 4.5) {
+        return 'B+';
+      } else if (score >= 4) {
+        return 'B';
+      } else if (score >= 3.5) {
+        return 'C+';
+      } else if (score >= 3) {
+        return 'C';
+      } else if (score >= 2.5) {
+        return 'D+';
+      } else if (score >= 2) {
+        return 'D';
+      } else {
+        return 'F';
+      }
+    };
     try {
       const results = await this.RatingModel.aggregate([
         {
           $match: {
-            placeId: placeId,
-            deletedAt: null,
+            placeId: placeIdObj,
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
           },
         },
         {
@@ -241,6 +263,7 @@ export class PlaceService {
         placeId,
         {
           averageRating: results[0].averageRating,
+          averageRatingLabel: mapScoreToLabel(results[0].averageRating),
         },
         { new: true },
       );
@@ -251,11 +274,12 @@ export class PlaceService {
   }
 
   async sumReviewsCountLastMonth(placeId: string) {
+    const placeIdObj = new Types.ObjectId(placeId);
     try {
       const results = await this.RatingModel.aggregate([
         {
           $match: {
-            placeId: placeId,
+            placeId: placeIdObj,
             deletedAt: null,
             createdAt: {
               $gte: new Date(new Date().setMonth(new Date().getMonth() - 1)),
@@ -358,6 +382,53 @@ export class PlaceService {
         .limit(10)
         .exec();
       return places;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async getRatingSummary(placeId: string) {
+    const placeIdObj = new Types.ObjectId(placeId);
+    try {
+      const results = await this.RatingModel.aggregate([
+        {
+          $match: {
+            placeId: placeIdObj,
+            $or: [{ deletedAt: null }, { deletedAt: { $exists: false } }],
+          },
+        },
+        {
+          $group: {
+            _id: '$placeId',
+            rate1: {
+              $sum: {
+                $cond: [{ $eq: ['$rating', 1] }, 1, 0],
+              },
+            },
+            rate2: {
+              $sum: {
+                $cond: [{ $eq: ['$rating', 2] }, 1, 0],
+              },
+            },
+            rate3: {
+              $sum: {
+                $cond: [{ $eq: ['$rating', 3] }, 1, 0],
+              },
+            },
+            rate4: {
+              $sum: {
+                $cond: [{ $eq: ['$rating', 4] }, 1, 0],
+              },
+            },
+            rate5: {
+              $sum: {
+                $cond: [{ $eq: ['$rating', 5] }, 1, 0],
+              },
+            },
+          },
+        },
+      ]);
+      return results;
     } catch (error) {
       throw new Error(error);
     }

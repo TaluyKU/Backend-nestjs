@@ -89,6 +89,12 @@ export class PlaceController {
     return reviews;
   }
 
+  @Get('/review/summary/:placeId')
+  getRatingSummary(@Param('placeId') placeId: string) {
+    const ratingSummary = this.placeService.getRatingSummary(placeId);
+    return ratingSummary;
+  }
+
   @Get('/search/:query')
   searchPlace(@Param('query') query: string) {
     const foundPlace = this.placeService.searchPlaceByName(query);

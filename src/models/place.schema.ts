@@ -83,6 +83,9 @@ export class Place extends Document {
   @Prop({ default: 0, index: true })
   averageRating: number;
 
+  @Prop({ default: '' })
+  averageRatingLabel: string;
+
   @Prop({ default: Date.now, index: true })
   createdAt: Date;
 }
