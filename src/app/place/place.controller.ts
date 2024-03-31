@@ -113,6 +113,12 @@ export class PlaceController {
     return nearbyPlaces;
   }
 
+  @Get('/category/:category')
+  getCategoryPlace(@Param('category') category: string) {
+    const categoryPlaces = this.placeService.findPlaceByCategory(category);
+    return categoryPlaces;
+  }
+
   @Get('/newest')
   getNewestPlace() {
     const newestPlaces = this.placeService.getNewestPlace();

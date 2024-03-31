@@ -6,6 +6,7 @@ import { AuthService } from '../auth/auth.service';
 import { Request } from 'express';
 import { Favorite } from 'src/models/favorite.schema';
 import { Rating } from 'src/models/rating.schema';
+import { create } from 'domain';
 
 @Injectable()
 export class PlaceService {
@@ -31,16 +32,24 @@ export class PlaceService {
     return places;
   }
 
+  async createPlace(place: Place) {
+    const newPlace = await this.PlaceModel.create(place);
+    this.logger.debug(`[CREATE] Place: ${newPlace}`);
+    return newPlace;
+  }
+
   async findPlaceByName(name: string): Promise<Place> {
     const places = await this.PlaceModel.findOne({ name: name }).exec();
     this.logger.debug(`[GET] Place By Name: ${places}`);
     return places;
   }
 
-  async createPlace(place: Place) {
-    const newPlace = await this.PlaceModel.create(place);
-    this.logger.debug(`[CREATE] Place: ${newPlace}`);
-    return newPlace;
+  async findPlaceByCategory(category: string): Promise<Place[]> {
+    const places = await this.PlaceModel.find({
+      categories: { $in: [category] },
+    }).exec();
+    this.logger.debug(`[GET] Place By Category: ${category}`);
+    return places;
   }
 
   async addImage(request: Request, placeId: string, imageName: string) {
@@ -171,12 +180,41 @@ export class PlaceService {
   }
 
   async findReviewByPlaceId(placeId: string) {
+    const placeIdObj = new Types.ObjectId(placeId);
     try {
-      const Reviews = await this.RatingModel.find({
-        placeId: placeId,
-        deletedAt: null,
-      }).exec();
-      return Reviews;
+      const ReviewsWithUserInfo = await this.RatingModel.aggregate([
+        {
+          $match: {
+            placeId: placeIdObj,
+            deletedAt: null,
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: '_id',
+            as: 'userInfo',
+          },
+        },
+        {
+          $unwind: '$userInfo',
+        },
+        {
+          $project: {
+            _id: 1,
+            rating: 1,
+            comment: 1,
+            createdAt: 1,
+            userInfo: {
+              _id: 1,
+              name: 1,
+              avatar: 1,
+            },
+          },
+        },
+      ]);
+      return ReviewsWithUserInfo;
     } catch (error) {
       throw new Error(error);
     }
@@ -228,6 +266,14 @@ export class PlaceService {
                     score: { boost: { value: 2 } },
                   },
                 },
+                // {
+                //   near: {
+                //     origin: '<your_geo_point_here>',
+                //     path: '<your_geo_field_here>',
+                //     pivot: '<distance_in_meters>',
+                //     score: { boost: { value: '<your_boost_value_here>' } },
+                //   },
+                // },
               ],
             },
           },

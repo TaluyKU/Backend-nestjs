@@ -53,7 +53,6 @@ export class UploadService {
       throw new Error('Unauthorized');
     }
 
-    console.log(imageBase64);
     // Decode base64 string to Buffer
     const buffer = Buffer.from(imageBase64, 'base64');
     const uniqueFileName = `${uuidv4()}.jpg`;

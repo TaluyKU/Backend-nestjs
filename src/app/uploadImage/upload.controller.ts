@@ -26,7 +26,6 @@ export class UploadController {
       throw new HttpException('No Image Provided', HttpStatus.BAD_REQUEST);
     }
     this.logger.log(`[POST] Upload images`);
-    this.logger.verbose(`[POST] Images: ${imagesBase64}`);
     return await this.uploadService.uploadImage(req, imagesBase64, placeId);
   }
 
