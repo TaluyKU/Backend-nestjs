@@ -399,6 +399,7 @@ export class PlaceService {
         {
           $sort: {
             averageRating: -1,
+            reviewsCountLastMonth: -1,
           },
         },
         {
@@ -412,7 +413,11 @@ export class PlaceService {
         _id: { $in: placeIds },
       });
 
-      return places;
+      const orderedPlaces = placeIds.map((id) =>
+        places.find((place) => place._id.toString() === id.toString()),
+      );
+
+      return orderedPlaces;
     } catch (error) {
       throw new Error(error);
     }
