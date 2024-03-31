@@ -12,6 +12,7 @@ export class Place extends Document {
   @Prop({
     type: { longitude: { type: Number }, latitude: { type: Number } },
     required: true,
+    index: '2dsphere',
   })
   location: { latitude: number; longitude: number };
 
@@ -91,5 +92,3 @@ export class Place extends Document {
 }
 
 export const PlaceSchema = SchemaFactory.createForClass(Place);
-
-PlaceSchema.index({ location: '2dsphere' });

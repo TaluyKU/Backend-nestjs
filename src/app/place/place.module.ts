@@ -8,5 +8,6 @@ import { AuthModule } from '../auth/auth.module';
   imports: [MongodbModule, AuthModule],
   providers: [PlaceService],
   controllers: [PlaceController],
+  exports: [PlaceService],
 })
 export class PlaceModule {}

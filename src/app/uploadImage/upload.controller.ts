@@ -19,15 +19,15 @@ export class UploadController {
 
   private readonly logger = new Logger(UploadController.name);
 
-  @Post('/image')
-  @UseInterceptors(FileInterceptor('image'))
+  @Post('/images')
   async uploadImage(@Req() req: Request) {
-    const { imageBase64 } = req.body;
-    if (!imageBase64) {
+    const { imagesBase64, placeId } = req.body;
+    if (!imagesBase64) {
       throw new HttpException('No Image Provided', HttpStatus.BAD_REQUEST);
     }
-    this.logger.log(`[POST] Upload image`);
-    return await this.uploadService.uploadImage(req, imageBase64);
+    this.logger.log(`[POST] Upload images`);
+    this.logger.verbose(`[POST] Images: ${imagesBase64}`);
+    return await this.uploadService.uploadImage(req, imagesBase64, placeId);
   }
 
   @Post('/profile')

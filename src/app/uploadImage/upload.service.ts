@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
+import { PlaceService } from '../place/place.service';
 import { Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -15,32 +16,35 @@ export class UploadService {
   constructor(
     private readonly configService: ConfigService,
     private readonly authService: AuthService,
+    private readonly placeService: PlaceService,
   ) {}
 
   private readonly logger = new Logger(UploadService.name);
 
-  async uploadImage(request: Request, imageBase64: string) {
+  async uploadImage(request: Request, imageBase64: string[], placeId: string) {
     if (!this.authService.checkAuth(request)) {
       throw new Error('Unauthorized');
     }
 
-    // Decode base64 string to Buffer
-    const buffer = Buffer.from(imageBase64, 'base64');
-    const uniqueFileName = `${uuidv4()}.jpg`;
+    for (const image of imageBase64) {
+      // Decode base64 string to Buffer
+      const buffer = Buffer.from(image, 'base64');
+      const uniqueFileName = `${uuidv4()}.jpg`;
 
-    try {
-      await this.s3Client.send(
-        new PutObjectCommand({
-          Bucket: 'taluyku',
-          Key: uniqueFileName,
-          Body: buffer,
-          ContentType: 'image/jpeg',
-        }),
-      );
-      return uniqueFileName;
-    } catch (error) {
-      this.logger.error(`[UploadImage] ${error}`);
-      throw new Error(`[UploadImage] ${error}`);
+      try {
+        await this.s3Client.send(
+          new PutObjectCommand({
+            Bucket: 'taluyku',
+            Key: uniqueFileName,
+            Body: buffer,
+            ContentType: 'image/jpeg',
+          }),
+        );
+        this.placeService.addImage(request, placeId, uniqueFileName);
+      } catch (error) {
+        this.logger.error(`[UploadImage] ${error}`);
+        throw new Error(`[UploadImage] ${error}`);
+      }
     }
   }
 

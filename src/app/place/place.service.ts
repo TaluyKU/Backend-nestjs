@@ -31,10 +31,31 @@ export class PlaceService {
     return places;
   }
 
-  async addPlace(place: Place) {
+  async findPlaceByName(name: string): Promise<Place> {
+    const places = await this.PlaceModel.findOne({ name: name }).exec();
+    this.logger.debug(`[GET] Place By Name: ${places}`);
+    return places;
+  }
+
+  async createPlace(place: Place) {
     const newPlace = await this.PlaceModel.create(place);
     this.logger.debug(`[CREATE] Place: ${newPlace}`);
     return newPlace;
+  }
+
+  async addImage(request: Request, placeId: string, imageName: string) {
+    if (!this.authService.checkAuth(request)) {
+      throw new Error('Unauthorized');
+    }
+
+    const place = await this.PlaceModel.findById(placeId).exec();
+    if (!place) {
+      throw new Error('Place not found');
+    }
+
+    place.images.push(imageName);
+    await place.save();
+    return place;
   }
 
   async addFavoritePlace(request: Request, placeId: string) {
@@ -359,12 +380,13 @@ export class PlaceService {
           $geoNear: {
             near: {
               type: 'Point',
-              coordinates: [longitude, latitude],
+              coordinates: [Number(longitude), Number(latitude)],
             },
             distanceField: 'distance',
             spherical: true,
-            maxDistance: 1000,
           },
+        },
+        {
           $limit: 10,
         },
       ]);

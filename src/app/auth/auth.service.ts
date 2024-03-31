@@ -27,7 +27,7 @@ export class AuthService {
     // Check if a user with the same email already exists
     const existingUser = await this.usersService.findUserByEmail(email);
     if (existingUser) {
-      throw new HttpException('อีเมลนี้ถูกใช้ไปแล้ว', HttpStatus.BAD_REQUEST);
+      throw new HttpException('ชื่อผู้ใช้ถูกใช้ไปแล้ว', HttpStatus.BAD_REQUEST);
     }
 
     //check password equal to confirm_password
@@ -57,7 +57,7 @@ export class AuthService {
     this.logger.debug(`[LOGIN] Login User: ${email}`);
     const user: User = await this.usersService.findUserByEmail(email);
     if (!user) {
-      throw new HttpException('ไม่พบบัญชีนี้', HttpStatus.NOT_FOUND);
+      throw new HttpException('ไม่พบผู้ใช้งาน', HttpStatus.NOT_FOUND);
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
