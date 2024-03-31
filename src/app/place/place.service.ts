@@ -399,7 +399,6 @@ export class PlaceService {
         {
           $sort: {
             averageRating: -1,
-            reviewsCountLastMonth: -1,
           },
         },
         {
